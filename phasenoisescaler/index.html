@@ -1,18 +1,126 @@
 <!DOCTYPE html>
 <html>
 <head>
-	<title>Phase Noise Scaler - Free Online Tool</title>
+	<title>Phase Noise Scaler - Free Converter</title>
 	
+	<meta name="description" content="Simple tool for scaling phase noise at a given offset and center frequency to a target offset and frequency">
+	<meta name="author" content="Robert Brennan">
+	<meta name="keywords" content="phase noise, convert, converter, convertor, conversion, known, target, scaling, noise, vco, reference, osc, oscillator, crystal, ocxo, tcxo, vcxo, ocxo">
+    	
 	<link href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-BVYiiSIFeK1dGmJRAkycuHAHRg32OmUcww7on3RYdg4Va+PmSTsz/K68vbdEjh4u" crossorigin="anonymous">	
+	
+	<style>
+	.table-borderless tbody tr td,
+	.table-borderless tbody tr th,
+	.table-borderless thead tr th,
+	.table-borderless thead tr td,
+	.table-borderless tfoot tr th,
+	.table-borderless tfoot tr td {
+		border: none;
+	}
+	</style>
 </head>
 
 <body>
-
-<h1>Hello world</h1>
-<p>I'm hosted with GitHub Pages.</p>
-
-
+<div class="container">
+	<div class="jumbotron" style="margin-top: 10px; margin-bottom: 10px;">
+		<h1>Phase Noise Scaler</h1>
+		<p>Scale a known phase noise number to a different offset and/or center frequency. </p>
+		<p style="font-size: 100%">Performance is rolled off at 20 dB/decade and scaled at 6.02 dB per doubling.</p>
+	</div>
+	
+	<div class="panel panel-default">
+		<div class="panel-heading"><strong>Known phase noise performance</strong></div>
+		<div class="panel-body">
+			<table class="table table-borderless">
+				<tr>
+					<th>Phase noise</th>
+					<th>Frequency offset</th>
+					<th>Center frequency</th>
+				</tr>
+				<tr>
+					<td>
+						<div class="input-group">
+							<input type="text" class="form-control" value="-138" aria-describedby="addon1" id="kP">
+							<span class="input-group-addon" id="addon1">dBc/Hz</span>
+						</div>
+					</td>
+					<td>
+						<div class="input-group">
+							<input type="text" class="form-control" value="1000" aria-describedby="addon2" id="kO">
+							<span class="input-group-addon" id="addon2">kHz</span>
+						</div>
+					</td>
+					<td>
+						<div class="input-group">
+							<input type="text" class="form-control" value="3400" aria-describedby="addon3" id="kF">
+							<span class="input-group-addon" id="addon3">MHz</span>
+						</div>
+					</td>
+				</tr>
+			</table>
+		</div>
+	</div>
+	
+	<div class="panel panel-default">
+		<div class="panel-heading"><strong>Target</strong></div>
+		<div class="panel-body" style="margin: 0 auto; width:50%">
+			<table class="table table-borderless">
+				<tr>
+					<td>
+						<label for="tF">Target frequency</label>
+						<div class="input-group">
+							<input type="text" class="form-control" value="1700" id="tF" aria-describedby="addon4">
+							<span class="input-group-addon" id="addon4">MHz</span>	
+						</div>	
+					</td>	
+				</tr>
+				<tr>
+					<td>
+						<label for="tO">Target offset</label>
+						<div class="input-group">
+							<input type="text" class="form-control" value="1000" id="tO" aria-describedby="addon5">
+							<span class="input-group-addon" id="addon5">kHz</span>							
+						</div>
+					</td>
+				</tr>
+				<tr>
+					<td>
+						<label for="tP">Phase noise</label>
+						<div class="input-group">
+							<input type="text" class="form-control" value="-144" id="tP" aria-describedby="addon6" readonly>
+							<span class="input-group-addon" id="addon6">dBc/Hz</span>
+						</div>				
+					</td>
+				</tr>
+				
+			</table>
+		</div>
+	</div>	
+</div>
 	<script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js" integrity="sha384-Tc5IQib027qvyjSMfHjOMaLkfuWVxZxUPnCJA7l2mCWNIpG9mGCD8wGNIcPD7Txa" crossorigin="anonymous"></script>
 
+	<script>
+	
+		document.getElementById("kP").addEventListener("keyup", calc, false);
+		document.getElementById("kO").addEventListener("keyup", calc, false);
+		document.getElementById("kF").addEventListener("keyup", calc, false);
+		document.getElementById("tF").addEventListener("keyup", calc, false);
+		document.getElementById("tO").addEventListener("keyup", calc, false);
+	
+		function calc()	{
+			var kP = document.getElementById("kP").value; 		// known phase noise
+			var kO = document.getElementById("kO").value; 		// known offset frequency
+			var kF = document.getElementById("kF").value; 		// known center frequency
+			var tF = document.getElementById("tF").value;			// target center frequency
+			var tO = document.getElementById("tO").value;		// target offset frequency
+			
+			
+			var pn = Number(kP) + 20 * Math.log10(Number(tF/kF)); 				// scaling by center frequency
+			pn = pn + 20 * Math.log10(Number(kO/tO));					// scaling by offset
+
+			document.getElementById("tP").value = Number(pn.toFixed(1));	
+		}
+	</script>
 </body>
 </html>
